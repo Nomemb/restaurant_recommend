@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_3281b0d87e69dd4faa535ddac23c2b60 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_3281b0d87e69dd4faa535ddac23c2b60" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_3281b0d87e69dd4faa535ddac23c2b60 = L.map(
+                "map_3281b0d87e69dd4faa535ddac23c2b60",
+                {
+                    center: [37.5060736, 126.9281015],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 15,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_ece7f90c7c800ea26f2ba4d68ec12583 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_ece7f90c7c800ea26f2ba4d68ec12583.addTo(map_3281b0d87e69dd4faa535ddac23c2b60);
+        
+    
+            var marker_0707916a3a082654de6740f7fb9df24f = L.marker(
+                [37.5060736, 126.9281015],
+                {}
+            ).addTo(map_3281b0d87e69dd4faa535ddac23c2b60);
+        
+    
+            var icon_c084e7992a684e562a55d0897bab5ee3 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_0707916a3a082654de6740f7fb9df24f.setIcon(icon_c084e7992a684e562a55d0897bab5ee3);
+        
+    
+        var popup_18bdf2f0074c3cf88548ddc6905abf22 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_dd46eb9625cafe8acac7ac66fdfde614 = $(`<div id="html_dd46eb9625cafe8acac7ac66fdfde614" style="width: 100.0%; height: 100.0%;">서울특별시 동작구 대방동</div>`)[0];
+                popup_18bdf2f0074c3cf88548ddc6905abf22.setContent(html_dd46eb9625cafe8acac7ac66fdfde614);
+            
+        
+
+        marker_0707916a3a082654de6740f7fb9df24f.bindPopup(popup_18bdf2f0074c3cf88548ddc6905abf22)
+        ;
+
+        
+    
+    
+            var marker_a91020dedb4931e410d58a47a6523334 = L.marker(
+                [37.5082513, 126.9609352],
+                {}
+            ).addTo(map_3281b0d87e69dd4faa535ddac23c2b60);
+        
+    
+            var icon_0970e16f8ab4e576189dc8e4fe2f8d19 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "cutlery", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_a91020dedb4931e410d58a47a6523334.setIcon(icon_0970e16f8ab4e576189dc8e4fe2f8d19);
+        
+    
+        var popup_20557ebf80a4849271caa989ca7ddfb2 = L.popup({"maxWidth": 1000});
+
+        
+            
+                var html_a083ea9af9bf2b22592a1c4e8038eaef = $(`<div id="html_a083ea9af9bf2b22592a1c4e8038eaef" style="width: 100.0%; height: 100.0%;">     <b>식당 이름:</b> 식당1<br>     <b>별점:</b> 4.5점<br>     <b>설명:</b> 한식 전문점     </div>`)[0];
+                popup_20557ebf80a4849271caa989ca7ddfb2.setContent(html_a083ea9af9bf2b22592a1c4e8038eaef);
+            
+        
+
+        marker_a91020dedb4931e410d58a47a6523334.bindPopup(popup_20557ebf80a4849271caa989ca7ddfb2)
+        ;
+
+        
+    
+    
+            marker_a91020dedb4931e410d58a47a6523334.bindTooltip(
+                `<div>
+                     식당1 - 4.5점
+                 </div>`,
+                {"sticky": true}
+            );
+        
+</script>
+</html>
