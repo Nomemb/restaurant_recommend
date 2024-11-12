@@ -78,7 +78,7 @@ async def get_location(address: str = Form(...)):
                 "request": {},
                 "address": address,
                 "restaurants": sorted_restaurants.to_dict(orient="records"),
-                "map_url": "./map.html"
+                "map_url": "/static/map.html"
             }
         )
     return RedirectResponse("/", status_code=302)
