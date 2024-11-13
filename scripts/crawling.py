@@ -28,34 +28,13 @@ def regex_addr(addr):
 
 
 driver = set_driver()
-store = pd.read_csv("../dataset/store2.csv", encoding='utf-8')
-
-drop_conditions = ['편의점', '푸드트럭', '출장조리', '라이브카페']
-print(f"삭제 이전 : {len(store)}행")
-
-store = store[~store.업태명.isin(drop_conditions)]
-
-
-# 주소 전처리
-non_str_indices = store.loc[store['addr'].apply(lambda x: not isinstance(x, str)), 'addr'].index
-store = store.drop(non_str_indices, axis=0).reset_index(drop=True)
-print(f"삭제 이후 : {len(store)}행")
-addr_clean = []
-for addr in store.addr:
-    cleaned_addr = regex_addr(addr)
-    addr_clean.append(cleaned_addr)
-store['addr'] = addr_clean
-
-store.to_csv("../dataset/clean_store_data.csv", encoding='utf-8')
 
 store = pd.read_csv("../dataset/clean_store_data.csv", encoding='utf-8')
 
 temp = store.copy()
-print(temp.info)
 temp.drop_duplicates(["업소명","addr"], inplace=True)
-print(temp.info)
 
-sample = store[1786:8172]
+sample = store[:20]
 
 
 def save_reviews():
@@ -72,7 +51,7 @@ def save_reviews():
 
                 if link_more_button and link_more_button.text != "후기 접기":
                     link_more_button.click()
-                    time.sleep(0.5)
+                    time.sleep(1)
                     # print("후기 더보기 클릭")
 
             # 없으면 탈출
@@ -82,7 +61,7 @@ def save_reviews():
     except:
         print("후기 더보기 버튼 없음")
 
-    time.sleep(3)
+    time.sleep(6)
     # 리뷰들 긁어오기
     reviews = driver.find_elements(By.CLASS_NAME, 'txt_comment')
 
@@ -97,13 +76,17 @@ def save_reviews():
     # 다시 검색창으로 이동
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
-    time.sleep(1)
+    time.sleep(2)
     return review_list
 
 
-def crawl_rest_data(num_of_result, store_name, addr, latitude, longitude):
+def crawl_rest_data(num_of_result, store_info):
     for t in range(1, min(16, 1 + num_of_result)):
         xpath_name = f'/html/body/div[5]/div[2]/div[1]/div[7]/div[5]/ul/li[{t}]/div[3]/strong/a[2]'
+
+        store_name = store_info.업소명
+        store_addr = store_info.addr
+
         try:
             name = driver.find_element(By.XPATH, xpath_name).text
             xpath_review = f'/html/body/div[5]/div[2]/div[1]/div[7]/div[5]/ul/li[{t}]/div[4]/span[1]/a'
@@ -112,7 +95,7 @@ def crawl_rest_data(num_of_result, store_name, addr, latitude, longitude):
             score = float(driver.find_element(By.XPATH, xpath_score).text)
 
             if name == store_name and review_num >= 5:
-                if mongo_db.validation_data(store_name, addr):
+                if mongo_db.validation_data(store_name, store_addr):
                     raise Exception()
 
                 print(f"{name}: 음식점 저장 --- {score}점(리뷰 {review_num}개)")
@@ -123,19 +106,23 @@ def crawl_rest_data(num_of_result, store_name, addr, latitude, longitude):
                 driver.switch_to.window(driver.window_handles[-1])
                 time.sleep(5)
                 reviews = save_reviews()
+                #keyword = 대충 키워드 함수()
+                #summary = 대충 GPT 함수()
                 temp = {
                     "store_name": store_name,
-                    "addr": addr,
+                    "addr": store_addr,
                     "score": score,
-                    "latitude": latitude,
-                    "longitude": longitude,
+                    "latitude": store_info.latitude,
+                    "longitude": store_info.longitude,
                     "review": reviews
+                    # "keyword": keyword,
+                    # "summary": summary
                 }
                 mongo_db.insert_data(temp)
         except:
             # 다시 검색창으로 이동
             driver.switch_to.window(driver.window_handles[0])
-            time.sleep(2)
+            time.sleep(4)
             pass
 
 
@@ -146,10 +133,7 @@ def insert_data_to_database(dataframe):
     """
     global driver
     cnt = 0
-    for store_name, addr, latitude, longitude in zip(dataframe["업소명"],
-                                                     dataframe["addr"],
-                                                     dataframe["latitude"],
-                                                     dataframe["longitude"]):
+    for store_info in dataframe.itertuples():
         # 메모리 누수 버그 잡기
         if cnt == 20:
             cnt = 0
@@ -162,7 +146,7 @@ def insert_data_to_database(dataframe):
         # 기존 검색어 제거
         search_area.clear()
         # 검색어 전달
-        search_area.send_keys(addr)
+        search_area.send_keys(store_info.addr)
 
         # 돋보기 클릭(검색)
         driver.find_element(By.XPATH, r'//*[@id="search.keyword.submit"]').send_keys(Keys.ENTER)
@@ -187,7 +171,7 @@ def insert_data_to_database(dataframe):
         n = num_of_result // 15 + (1 if num_of_result % 15 > 0 else 0)
 
         if n == 1:
-            crawl_rest_data(num_of_result, store_name, addr, latitude, longitude)
+            crawl_rest_data(num_of_result, store_info)
         elif n > 5:
             pass
         else:
@@ -197,7 +181,7 @@ def insert_data_to_database(dataframe):
                                         f'//a[@id="info.search.page.no{i}" and contains(text(), "{i}")]').send_keys(
                         Keys.ENTER)
                     time.sleep(1)
-                    crawl_rest_data(num_of_result, store_name, addr, latitude, longitude)
+                    crawl_rest_data(num_of_result, store_info)
                     num_of_result -= 15
                 except:
                     continue

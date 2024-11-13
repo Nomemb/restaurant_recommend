@@ -1,16 +1,13 @@
 from pymongo import MongoClient
 
 
-def connect_database():
+def connect_database(db_name):
     # 기본 DB 연결
     client = MongoClient(host='localhost', port=27017)
 
     db = client['local']
-    collection = db['Restaurant']
+    collection = db[db_name]
     return collection
-
-# 데이터 찾기 예시
-# print(collection.find_one({"name":"Alice"}))
 
 
 def view_database(collection):
@@ -34,4 +31,12 @@ def insert_data(store_info):
         db.insert_one(store_info)
 
 
-db = connect_database()
+def select_all_data():
+    db = connect_database("Restaurant")
+    cursor = db.find({})
+    return cursor
+
+# 실제용
+# db = connect_database("Restaurant")
+# 테스트용
+db = connect_database("test_Restaurant")

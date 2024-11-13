@@ -3,8 +3,9 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/python311.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/python312.venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.11 (KDT)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.12 (restaurant_recommend) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

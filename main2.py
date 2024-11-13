@@ -2,23 +2,29 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Optional, List
+
 import folium
 import requests
 import pandas as pd
-
+import logging
+from scripts import mongo_db
 app = FastAPI()
 
 # Static and templates setup
 app.mount("/static", StaticFiles(directory="."), name="static")
 templates = Jinja2Templates(directory="templates")
+logger = logging.getLogger("uvicorn.error")
 
 # Google Maps Geocoding API 키 설정 (본인의 키로 교체하세요)
-GOOGLE_API_KEY = "AIzaSyCB5Qpa0pUhCG_4eU3PvJTqUdCGr9ygSgA"
+GOOGLE_API_KEY = "AIzaSyDHYYrVTyeLmyjfMAV7RDZrk-aNhf-ZoOw"
 
 # 예시 데이터프레임 (식당 데이터)
-path = r"C:\Users\Admin\Desktop\store\restaurant_recommend\dataset\local.Restaurant(1~1754).json"
+path = f"dataset/test.json"
 restaurant_df = pd.read_json(path)
-restaurant_df = pd.DataFrame(restaurant_df)
+
 
 def get_coordinates_google(address):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
@@ -30,8 +36,7 @@ def get_coordinates_google(address):
             latitude = data["results"][0]["geometry"]["location"]["lat"]
             longitude = data["results"][0]["geometry"]["location"]["lng"]
             return [latitude, longitude]
-        else:
-            return None
+
     return None
 
 def generate_map(current_location, address):
@@ -42,15 +47,15 @@ def generate_map(current_location, address):
         icon=folium.Icon(color='blue', icon='info-sign')
     ).add_to(map_folium)
 
-    for idx, row in restaurant_df.iterrows():
+    for row in mongo_db.select_all_data():
         popup_text = f"""
-        <b>식당 이름:</b> {row['store_name']}<br>
-        <b>식당 주소:</b> {row['addr']}<br>
-        <b>별점:</b> {row['score']}점<br>
-        <b>설명:</b> {row['review']}
+        <b>식당 이름:</b> {row["store_name"]}<br>
+        <b>식당 주소:</b> {row["addr"]}<br>
+        <b>별점:</b> {row["score"]}점<br>
+        <b>설명:</b> {row["summary"]}
         """
         folium.Marker(
-            location=[row['latitude'], row['longitude']],
+            location=[row["latitude"], row["longitude"]],
             popup=folium.Popup(popup_text, max_width=1000),
             icon=folium.Icon(color='red', icon='cutlery')
         ).add_to(map_folium)
@@ -60,6 +65,7 @@ def generate_map(current_location, address):
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.post("/maps/")
 async def get_location(address: str = Form(...)):
@@ -73,7 +79,7 @@ async def get_location(address: str = Form(...)):
         ) ** 0.5
         sorted_restaurants = sorted_restaurants.sort_values(by='distance').head(3)
         return templates.TemplateResponse(
-            "index.html",
+            "recommend.html",
             {
                 "request": {},
                 "address": address,
@@ -81,4 +87,5 @@ async def get_location(address: str = Form(...)):
                 "map_url": "/static/map.html"
             }
         )
-    return RedirectResponse("/", status_code=302)
+
+generate_map(get_coordinates_google("노량진역"), "노량진역")
